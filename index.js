@@ -16,11 +16,21 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-app.use(session({ secret: "secret", resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: process.env.SESSION_SECRET, // Replace with a strong secret
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    sameSite: 'none',  // Required for cross-site cookies
+    secure: true       // true if using HTTPS (which Render does)
+  }
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 const paymentRoutes = require("./routes/paymentRoutes");
 app.use("/api/payment", paymentRoutes);
+
 
 
 
